@@ -15,7 +15,18 @@ export const getPosts = async (): Promise<Post[]> => {
     throw error;
   }
   
-  return data || [];
+  // Map the DB response to our Post model
+  return (data || []).map(post => ({
+    id: post.id,
+    title: post.title,
+    author: post.author,
+    edition: post.edition,
+    category: post.category,
+    description: post.description,
+    coverUrl: post.cover_url,
+    ownerId: post.owner_id,
+    createdAt: post.created_at
+  }));
 };
 
 // Get post by ID
@@ -31,14 +42,38 @@ export const getPostById = async (id: string): Promise<Post | null> => {
     throw error;
   }
   
-  return data;
+  if (!data) return null;
+  
+  // Map the DB response to our Post model
+  return {
+    id: data.id,
+    title: data.title,
+    author: data.author,
+    edition: data.edition,
+    category: data.category,
+    description: data.description,
+    coverUrl: data.cover_url,
+    ownerId: data.owner_id,
+    createdAt: data.created_at
+  };
 };
 
 // Create a new post
 export const createPost = async (post: Omit<Post, 'id' | 'createdAt'>): Promise<Post> => {
+  // Convert our Post model to match the DB schema
+  const dbPost = {
+    title: post.title,
+    author: post.author,
+    edition: post.edition,
+    category: post.category,
+    description: post.description,
+    cover_url: post.coverUrl,
+    owner_id: post.ownerId
+  };
+  
   const { data, error } = await supabase
     .from('posts')
-    .insert([post])
+    .insert([dbPost])
     .select()
     .single();
   
@@ -47,7 +82,18 @@ export const createPost = async (post: Omit<Post, 'id' | 'createdAt'>): Promise<
     throw error;
   }
   
-  return data;
+  // Map the DB response back to our Post model
+  return {
+    id: data.id,
+    title: data.title,
+    author: data.author,
+    edition: data.edition,
+    category: data.category,
+    description: data.description,
+    coverUrl: data.cover_url,
+    ownerId: data.owner_id,
+    createdAt: data.created_at
+  };
 };
 
 // Get wishlist items for a user
@@ -63,14 +109,36 @@ export const getWishlistItems = async (userId: string): Promise<WishlistItem[]> 
     throw error;
   }
   
-  return data || [];
+  // Map the DB response to our WishlistItem model
+  return (data || []).map(item => ({
+    id: item.id,
+    title: item.title,
+    author: item.author,
+    edition: item.edition,
+    category: item.category,
+    description: item.description,
+    coverUrl: item.cover_url,
+    userId: item.user_id,
+    createdAt: item.created_at
+  }));
 };
 
 // Add item to wishlist
 export const addToWishlist = async (item: Omit<WishlistItem, 'id' | 'createdAt'>): Promise<WishlistItem> => {
+  // Convert our WishlistItem model to match the DB schema
+  const dbItem = {
+    title: item.title,
+    author: item.author,
+    edition: item.edition,
+    category: item.category,
+    description: item.description,
+    cover_url: item.coverUrl,
+    user_id: item.userId
+  };
+  
   const { data, error } = await supabase
     .from('wishlist')
-    .insert([item])
+    .insert([dbItem])
     .select()
     .single();
   
@@ -79,7 +147,31 @@ export const addToWishlist = async (item: Omit<WishlistItem, 'id' | 'createdAt'>
     throw error;
   }
   
-  return data;
+  // Map the DB response back to our WishlistItem model
+  return {
+    id: data.id,
+    title: data.title,
+    author: data.author,
+    edition: data.edition,
+    category: data.category,
+    description: data.description,
+    coverUrl: data.cover_url,
+    userId: data.user_id,
+    createdAt: data.created_at
+  };
+};
+
+// Delete an item from wishlist
+export const removeFromWishlist = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('wishlist')
+    .delete()
+    .eq('id', id);
+  
+  if (error) {
+    console.error('Error removing from wishlist:', error);
+    throw error;
+  }
 };
 
 // Mock data for development (when not using real backend)

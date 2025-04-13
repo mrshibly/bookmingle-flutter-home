@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, ShieldCheck } from 'lucide-react';
-import { getWishlistItems, getMockWishlistItems } from '@/services/postService';
+import { Plus, ShieldCheck, Trash2 } from 'lucide-react';
+import { getWishlistItems, getMockWishlistItems, removeFromWishlist } from '@/services/postService';
 import { WishlistItem } from '@/models/WishlistItem';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,6 +13,7 @@ const WishlistPage = () => {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  const [isDeletingItem, setIsDeletingItem] = useState<string | null>(null);
   const [newItem, setNewItem] = useState({
     title: '',
     author: '',
@@ -25,30 +26,32 @@ const WishlistPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        if (!user) return;
-        
-        // In development mode, we'll use mock data
-        if (process.env.NODE_ENV === 'development') {
-          const mockItems = getMockWishlistItems();
-          setWishlistItems(mockItems);
-        } else {
-          const items = await getWishlistItems(user.id);
-          setWishlistItems(items);
-        }
-      } catch (err: any) {
-        toast({
-          title: "Error",
-          description: err.message || "Failed to fetch wishlist items",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
+  const fetchWishlist = async () => {
+    try {
+      if (!user) return;
+      
+      setIsLoading(true);
+      
+      // In development mode, we'll use mock data
+      if (process.env.NODE_ENV === 'development') {
+        const mockItems = getMockWishlistItems();
+        setWishlistItems(mockItems);
+      } else {
+        const items = await getWishlistItems(user.id);
+        setWishlistItems(items);
       }
-    };
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to fetch wishlist items",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchWishlist();
   }, [user, toast]);
 
@@ -77,6 +80,49 @@ const WishlistPage = () => {
       category: '',
       description: ''
     });
+    
+    // Refresh the wishlist
+    fetchWishlist();
+  };
+
+  const handleDeleteItem = async (id: string) => {
+    if (!user) return;
+    
+    try {
+      setIsDeletingItem(id);
+      
+      // In development mode, we'll simulate deletion
+      if (process.env.NODE_ENV === 'development') {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Remove item from state
+        setWishlistItems(prev => prev.filter(item => item.id !== id));
+        
+        toast({
+          title: "Item Removed",
+          description: "The item has been removed from your wishlist",
+        });
+      } else {
+        await removeFromWishlist(id);
+        
+        // Remove item from state
+        setWishlistItems(prev => prev.filter(item => item.id !== id));
+        
+        toast({
+          title: "Item Removed",
+          description: "The item has been removed from your wishlist",
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to remove item",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeletingItem(null);
+    }
   };
 
   if (isLoading) {
@@ -101,7 +147,15 @@ const WishlistPage = () => {
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold mb-6">Add in Wishlist</h1>
+        <div className="flex items-center mb-6">
+          <button 
+            onClick={() => setIsCreatingNew(false)}
+            className="mr-4 text-bookMingle-primary"
+          >
+            ← Back
+          </button>
+          <h1 className="text-2xl font-bold">Add to Wishlist</h1>
+        </div>
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4 flex items-center bg-bookMingle-card bg-opacity-80 rounded-xl pl-3">
@@ -220,21 +274,33 @@ const WishlistPage = () => {
           {wishlistItems.map(item => (
             <div 
               key={item.id}
-              className="bg-bookMingle-card bg-opacity-70 p-4 rounded-xl flex items-center"
-              onClick={() => navigate(`/book/${item.id}`)}
+              className="bg-bookMingle-card bg-opacity-70 p-4 rounded-xl flex items-center relative"
             >
-              <div className="w-12 h-16 bg-gray-200 rounded mr-3 overflow-hidden">
+              <div 
+                className="w-12 h-16 bg-gray-200 rounded mr-3 overflow-hidden cursor-pointer"
+                onClick={() => navigate(`/book/${item.id}`)}
+              >
                 <img 
                   src={item.coverUrl} 
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div>
+              <div 
+                className="flex-1 cursor-pointer"
+                onClick={() => navigate(`/book/${item.id}`)}
+              >
                 <h3 className="font-medium">{item.title}</h3>
                 <p className="text-xs">{item.author}</p>
                 <p className="text-xs mt-1">{item.category}</p>
               </div>
+              <button 
+                className="absolute right-3 top-3 text-red-500 p-1 hover:bg-gray-200 rounded-full"
+                onClick={() => handleDeleteItem(item.id)}
+                disabled={isDeletingItem === item.id}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
           ))}
           

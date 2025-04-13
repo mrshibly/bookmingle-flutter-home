@@ -5,8 +5,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { ImageIcon, Plus } from 'lucide-react';
-import { createPost, getMockPosts } from '@/services/postService';
+import { ImageIcon, Plus, ArrowLeft } from 'lucide-react';
+import { createPost } from '@/services/postService';
+import NavBar from '@/components/NavBar';
 
 const CreatePostPage = () => {
   const [title, setTitle] = useState('');
@@ -40,22 +41,6 @@ const CreatePostPage = () => {
       // For now, we'll just use a placeholder if no URL is provided
       const finalCoverUrl = coverUrl || 'https://placehold.co/400x600?text=No+Image';
       
-      // In development mode, we'll just mock the create action
-      // and redirect to home
-      if (process.env.NODE_ENV === 'development') {
-        // Simulate a delay like a real API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Add a toast notification
-        toast({
-          title: "Post Created",
-          description: "Your book has been successfully posted!",
-        });
-        
-        navigate('/home');
-        return;
-      }
-      
       await createPost({
         title,
         author,
@@ -84,21 +69,27 @@ const CreatePostPage = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8">
+    <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8 pb-20">
       {/* Status Bar */}
       <div className="bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs mb-6">
         <span>9:41</span>
         <div className="flex items-center space-x-2">
           <span>📶</span>
           <span>🔋 100%</span>
-          <span className="ml-4 rounded-full bg-blue-100 px-2 py-0.5 text-blue-800">50</span>
-          <span className="rounded-full bg-blue-800 p-1 text-white">🛡️</span>
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold mb-6">Create New Post</h1>
+      <div className="flex items-center mb-6">
+        <button 
+          onClick={() => navigate('/home')}
+          className="mr-4 text-bookMingle-primary"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <h1 className="text-2xl font-bold">Create New Post</h1>
+      </div>
       
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="mb-20">
         <div className="mb-4 flex items-center bg-bookMingle-card bg-opacity-80 rounded-xl pl-3">
           <Plus className="h-5 w-5 text-bookMingle-text opacity-70" />
           <Input
@@ -147,10 +138,25 @@ const CreatePostPage = () => {
           />
         </div>
         
+        <div className="mb-4 flex items-center bg-bookMingle-card bg-opacity-80 rounded-xl pl-3">
+          <Plus className="h-5 w-5 text-bookMingle-text opacity-70" />
+          <Input
+            type="text"
+            value={coverUrl}
+            onChange={(e) => setCoverUrl(e.target.value)}
+            placeholder="Cover Image URL"
+            className="border-0 bg-transparent focus-visible:ring-0"
+          />
+        </div>
+        
         {/* Image Placeholder */}
         <div className="flex justify-center mb-4">
           <div className="w-32 h-32 border-2 border-black rounded-lg flex items-center justify-center">
-            <ImageIcon className="h-12 w-12" />
+            {coverUrl ? (
+              <img src={coverUrl} alt="Book cover" className="w-full h-full object-cover rounded-lg" />
+            ) : (
+              <ImageIcon className="h-12 w-12" />
+            )}
           </div>
         </div>
         
@@ -168,13 +174,15 @@ const CreatePostPage = () => {
         <div className="flex justify-center">
           <button 
             type="submit" 
-            className="bg-bookMingle-card text-bookMingle-text py-2 px-10 rounded-full hover:bg-opacity-90 transition-colors"
+            className="bg-bookMingle-button text-white py-2 px-10 rounded-full hover:bg-opacity-90 transition-colors"
             disabled={isLoading}
           >
             {isLoading ? "Saving..." : "Done"}
           </button>
         </div>
       </form>
+      
+      <NavBar />
     </div>
   );
 };

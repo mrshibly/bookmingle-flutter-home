@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
-import { User } from 'lucide-react';
+import { User, ArrowLeft } from 'lucide-react';
 import { getPostById, getMockPosts, addToWishlist } from '@/services/postService';
 import { Post } from '@/models/Post';
+import NavBar from '@/components/NavBar';
 
 const BookDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -74,20 +75,6 @@ const BookDetailsPage = () => {
     setIsAddingToWishlist(true);
     
     try {
-      // In development, we'll just simulate the action
-      if (process.env.NODE_ENV === 'development') {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        toast({
-          title: "Added to Wishlist",
-          description: `${book.title} has been added to your wishlist`,
-        });
-        
-        navigate('/wishlist');
-        return;
-      }
-      
       await addToWishlist({
         title: book.title,
         author: book.author,
@@ -132,7 +119,7 @@ const BookDetailsPage = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8">
+    <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8 pb-20">
       {/* Status Bar */}
       <div className="bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs mb-4">
         <span>9:41</span>
@@ -142,8 +129,14 @@ const BookDetailsPage = () => {
         </div>
       </div>
 
-      {/* User Contact */}
-      <div className="flex justify-end mb-2">
+      <div className="flex justify-between items-center mb-4">
+        <button 
+          onClick={() => navigate('/home')}
+          className="text-bookMingle-primary"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        
         <button className="flex items-center text-bookMingle-primary text-sm">
           <User className="h-4 w-4 mr-1" />
           <span className="text-xs">contact Owner</span>
@@ -192,6 +185,8 @@ const BookDetailsPage = () => {
       >
         {isAddingToWishlist ? "Adding..." : "Add into wishlist"}
       </button>
+      
+      <NavBar />
     </div>
   );
 };
