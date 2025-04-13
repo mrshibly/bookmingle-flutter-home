@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
-const Index = () => {
+const Index: React.FC = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
 
