@@ -63,14 +63,16 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// BookMingle specific colors
+				// BookMingle specific colors - updated to match the design
 				bookMingle: {
-					primary: '#3F51B5',     // Deep indigo
-					accent: '#FFC107',      // Warm amber
-					background: '#FAFAFA',  // Soft off-white
-					card: '#FFFFFF',        // White
-					text: '#212121',        // Dark charcoal
-					textSecondary: '#757575' // Medium gray
+					primary: '#4361ee',      // Deep blue
+					accent: '#3a0ca3',       // Accent blue/purple
+					background: '#c8b6ff',   // Light purple background
+					backgroundLight: '#e2ddff', // Lighter purple
+					card: '#a2a8ff',         // Blue card background
+					button: '#4361ee',       // Button blue
+					text: '#121212',         // Dark text
+					textSecondary: '#4a4a4a' // Medium gray
 				}
 			},
 			borderRadius: {
@@ -94,11 +96,20 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+					},
+					'100%': {
+						opacity: '1',
+					},
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 1s ease-out'
 			}
 		}
 	},

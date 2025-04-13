@@ -1,23 +1,22 @@
 
-import React from 'react';
-import HomePage from './HomePage';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (isLoading) return;
+    
+    // Redirect to splash screen which will handle auth logic
+    navigate('/');
+  }, [navigate, user, isLoading]);
+
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-white overflow-hidden shadow-lg">
-      <div className="relative">
-        {/* Status Bar */}
-        <div className="bg-black text-white flex justify-between items-center px-4 py-1 text-xs">
-          <span>9:41</span>
-          <div className="flex items-center space-x-2">
-            <span>📶</span>
-            <span>🔋 100%</span>
-          </div>
-        </div>
-        
-        {/* Flutter App */}
-        <HomePage />
-      </div>
+    <div className="flex items-center justify-center h-screen bg-bookMingle-background">
+      <p>Redirecting...</p>
     </div>
   );
 };
