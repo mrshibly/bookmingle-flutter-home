@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// BookMingle specific colors
+				bookMingle: {
+					primary: '#3F51B5',     // Deep indigo
+					accent: '#FFC107',      // Warm amber
+					background: '#FAFAFA',  // Soft off-white
+					card: '#FFFFFF',        // White
+					text: '#212121',        // Dark charcoal
+					textSecondary: '#757575' // Medium gray
 				}
 			},
 			borderRadius: {

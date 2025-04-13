@@ -1,11 +1,22 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import HomePage from './HomePage';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="max-w-md mx-auto min-h-screen bg-white overflow-hidden shadow-lg">
+      <div className="relative">
+        {/* Status Bar */}
+        <div className="bg-black text-white flex justify-between items-center px-4 py-1 text-xs">
+          <span>9:41</span>
+          <div className="flex items-center space-x-2">
+            <span>📶</span>
+            <span>🔋 100%</span>
+          </div>
+        </div>
+        
+        {/* Flutter App */}
+        <HomePage />
       </div>
     </div>
   );
