@@ -62,21 +62,23 @@ const AppRoutes = () => {
   );
 };
 
-// This needs to be a React component outside of the main App function
-const AppWithProviders = () => {
+// The main App component
+function AppWithProviders() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <BrowserRouter>
+              <AppRoutes />
+              <Toaster />
+              <Sonner />
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
   );
-};
+}
 
 export default AppWithProviders;

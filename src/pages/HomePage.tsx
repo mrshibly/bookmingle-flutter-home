@@ -33,6 +33,7 @@ const HomePage: React.FC = () => {
           setFilteredBooks(fetchedBooks);
         }
       } catch (err: any) {
+        console.error("Error fetching books:", err);
         toast({
           title: "Error",
           description: err.message || "Failed to fetch books",
