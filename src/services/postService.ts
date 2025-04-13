@@ -2,7 +2,7 @@
 import { Post } from "@/models/Post";
 import { WishlistItem } from "@/models/WishlistItem";
 import { supabase } from "@/integrations/supabase/client";
-import { getMockBooks, getMockWishlistItems } from "./mockDataService";
+import { getMockBooks, getMockWishlistItems as getMockWishlistItemsFromService } from "./mockDataService";
 
 // Get all posts
 export const getPosts = async (): Promise<Post[]> => {
@@ -194,7 +194,7 @@ export const getMockPosts = (): Post[] => {
     title: book.title,
     author: book.author,
     edition: "First Edition",
-    category: book.genres?.[0] || book.genre || "Fiction",
+    category: book.genre || "Fiction", // Fixed: use book.genre directly
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     coverUrl: book.coverUrl,
     ownerId: "12345",
@@ -203,6 +203,8 @@ export const getMockPosts = (): Post[] => {
 };
 
 // For development purposes, get mock wishlist items
-export const getMockWishlistItems = (): WishlistItem[] => {
-  return getMockWishlistItems();
+// Fixed: Renamed to avoid conflict with the import
+export const getMockWishlistItemsForDev = (): WishlistItem[] => {
+  // Fixed: Call the imported function from mockDataService instead of calling self
+  return getMockWishlistItemsFromService();
 };
