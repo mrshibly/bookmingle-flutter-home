@@ -1,6 +1,7 @@
-
 import { Book } from '../models/Book';
 import { Category } from '../models/Category';
+import { Post } from '@/models/Post';
+import { WishlistItem } from '@/models/WishlistItem';
 
 export const getFeaturedBooks = (): Book[] => {
   return [
@@ -150,4 +151,27 @@ export const getCategories = (): Category[] => {
       color: '#00BCD4' // Cyan
     }
   ];
+};
+
+export const getMockBooks = (): Book[] => {
+  return [
+    ...getFeaturedBooks(),
+    ...getRecentlyAddedBooks()
+  ];
+};
+
+export const getMockWishlistItems = (): WishlistItem[] => {
+  const books = getMockBooks().slice(0, 3);
+  
+  return books.map(book => ({
+    id: `wish-${book.id}`,
+    title: book.title,
+    author: book.author,
+    edition: "First Edition",
+    category: book.genre,
+    description: "This is a book I would like to read.",
+    coverUrl: book.coverUrl,
+    userId: "12345",
+    createdAt: new Date().toISOString()
+  }));
 };

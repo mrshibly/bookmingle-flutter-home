@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Plus, ShieldCheck, Trash2 } from 'lucide-react';
-import { getWishlistItems, getMockWishlistItems, removeFromWishlist } from '@/services/postService';
+import { getWishlistItems, removeFromWishlist } from '@/services/postService';
 import { WishlistItem } from '@/models/WishlistItem';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,8 +34,10 @@ const WishlistPage = () => {
       
       // In development mode, we'll use mock data
       if (process.env.NODE_ENV === 'development') {
-        const mockItems = getMockWishlistItems();
-        setWishlistItems(mockItems);
+        // Import mock data dynamically to avoid circular dependencies
+        import('@/services/mockDataService').then(({ getMockWishlistItems }) => {
+          setWishlistItems(getMockWishlistItems());
+        });
       } else {
         const items = await getWishlistItems(user.id);
         setWishlistItems(items);

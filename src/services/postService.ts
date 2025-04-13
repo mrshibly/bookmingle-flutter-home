@@ -1,7 +1,8 @@
 
 import { Post } from "@/models/Post";
+import { WishlistItem } from "@/models/WishlistItem";
 import { supabase } from "@/integrations/supabase/client";
-import { getMockBooks } from "./mockDataService";
+import { getMockBooks, getMockWishlistItems } from "./mockDataService";
 
 // Get all posts
 export const getPosts = async (): Promise<Post[]> => {
@@ -138,7 +139,7 @@ export const addToWishlist = async (book: {
 };
 
 // Get wishlist items for the current user
-export const getWishlistItems = async (userId: string): Promise<Post[]> => {
+export const getWishlistItems = async (userId: string): Promise<WishlistItem[]> => {
   try {
     const { data, error } = await supabase
       .from('wishlist')
@@ -158,7 +159,7 @@ export const getWishlistItems = async (userId: string): Promise<Post[]> => {
       category: item.category,
       description: item.description,
       coverUrl: item.cover_url,
-      ownerId: item.user_id,
+      userId: item.user_id, // Map user_id to userId for WishlistItem type
       createdAt: item.created_at
     }));
   } catch (error: any) {
@@ -193,10 +194,15 @@ export const getMockPosts = (): Post[] => {
     title: book.title,
     author: book.author,
     edition: "First Edition",
-    category: book.genres[0] || "Fiction",
+    category: book.genres?.[0] || book.genre || "Fiction",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     coverUrl: book.coverUrl,
     ownerId: "12345",
     createdAt: new Date().toISOString()
   }));
+};
+
+// For development purposes, get mock wishlist items
+export const getMockWishlistItems = (): WishlistItem[] => {
+  return getMockWishlistItems();
 };
