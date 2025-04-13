@@ -8,6 +8,7 @@ import { getWishlistItems, removeFromWishlist } from '@/services/postService';
 import { WishlistItem } from '@/models/WishlistItem';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import NavBar from '@/components/NavBar';
 
 const WishlistPage = () => {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
@@ -249,7 +250,7 @@ const WishlistPage = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8">
+    <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8 pb-20">
       {/* Status Bar */}
       <div className="bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs mb-6">
         <span>9:41</span>
@@ -315,6 +316,9 @@ const WishlistPage = () => {
           </button>
         </div>
       )}
+      
+      {/* Add NavBar component at the bottom */}
+      <NavBar />
     </div>
   );
 };
