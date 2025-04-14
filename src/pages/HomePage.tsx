@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Book, Menu, Bell, Plus, Search, X, Trash2 } from 'lucide-react'; // Added Trash2 import
+import { Book, Menu, Bell, Plus, Search, X, Trash2 } from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 import NavBar from '@/components/NavBar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { getPosts, getMockPosts } from '@/services/postService';
 import { Post } from '@/models/Post';
 import { motion, AnimatePresence } from 'framer-motion';
+import BookStatusBadge from '@/components/BookStatusBadge';
 
 const HomePage: React.FC = () => {
   const [books, setBooks] = useState<Post[]>([]);
@@ -24,7 +24,6 @@ const HomePage: React.FC = () => {
     const fetchBooks = async () => {
       try {
         setIsLoading(true);
-        // In development mode, use mock data
         if (process.env.NODE_ENV === 'development') {
           const mockBooks = getMockPosts();
           setBooks(mockBooks);
@@ -67,15 +66,12 @@ const HomePage: React.FC = () => {
   };
 
   const handleDeleteBook = async (id: string) => {
-    // In a real app, this would call an API to delete the book
-    // For now, we'll just remove it from the state
     try {
       toast({
         title: "Book Deleted",
         description: "The book has been removed from your listings",
       });
       
-      // Remove from state
       setBooks(prev => prev.filter(book => book.id !== id));
       setFilteredBooks(prev => prev.filter(book => book.id !== id));
     } catch (err: any) {
@@ -102,7 +98,6 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-bookMingle-background pb-20">
-      {/* App Bar */}
       <header className="bg-bookMingle-primary px-4 py-4 shadow-md">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -120,7 +115,6 @@ const HomePage: React.FC = () => {
         </div>
       </header>
 
-      {/* Side Menu */}
       <AnimatePresence>
         {menuOpen && (
           <>
@@ -229,9 +223,7 @@ const HomePage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
       <main className="flex-1 px-4 pt-4 pb-20 overflow-y-auto">
-        {/* Search */}
         <div className="relative my-4">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-400" />
@@ -245,7 +237,6 @@ const HomePage: React.FC = () => {
           />
         </div>
 
-        {/* Create Post Button */}
         <div className="mb-6 flex justify-center">
           <button 
             onClick={() => navigate('/create-post')}
@@ -256,7 +247,6 @@ const HomePage: React.FC = () => {
           </button>
         </div>
 
-        {/* Books */}
         <section className="mt-4">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Books</h2>
           
@@ -336,7 +326,6 @@ const HomePage: React.FC = () => {
         </section>
       </main>
 
-      {/* Bottom Navigation */}
       <NavBar />
     </div>
   );

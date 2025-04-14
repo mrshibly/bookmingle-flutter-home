@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,10 +8,9 @@ import { motion } from 'framer-motion';
 import { User, AtSign, Lock, Map, ChevronDown } from 'lucide-react';
 
 const countries = [
-  "Bangladesh", // Added Bangladesh to the top of the list
   "United States", "Canada", "United Kingdom", "Australia", 
   "Germany", "France", "Japan", "India", "Brazil", "South Africa",
-  "Pakistan", "Sri Lanka", "Nepal", "China"
+  "Bangladesh", "Pakistan", "Sri Lanka", "Nepal", "China"
 ];
 
 const RegisterPage = () => {

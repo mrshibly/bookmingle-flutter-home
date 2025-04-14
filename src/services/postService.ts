@@ -1,4 +1,3 @@
-
 import { Post } from "@/models/Post";
 import { WishlistItem } from "@/models/WishlistItem";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,7 +25,8 @@ export const getPosts = async (): Promise<Post[]> => {
       coverUrl: post.cover_url,
       ownerId: post.owner_id,
       userId: post.owner_id, // Set userId to be the same as ownerId
-      createdAt: post.created_at
+      createdAt: post.created_at,
+      status: post.status || 'available'
     }));
   } catch (error: any) {
     console.error('Error fetching posts:', error);
@@ -62,7 +62,8 @@ export const getPostById = async (id: string): Promise<Post | null> => {
       coverUrl: data.cover_url,
       ownerId: data.owner_id,
       userId: data.owner_id, // Set userId to be the same as ownerId
-      createdAt: data.created_at
+      createdAt: data.created_at,
+      status: data.status || 'available'
     };
   } catch (error: any) {
     console.error('Error fetching post by ID:', error);
@@ -82,7 +83,8 @@ export const createPost = async (post: Omit<Post, 'id' | 'createdAt'>): Promise<
         category: post.category,
         description: post.description,
         cover_url: post.coverUrl,
-        owner_id: post.ownerId
+        owner_id: post.ownerId,
+        status: post.status || 'available'
       })
       .select()
       .single();
@@ -101,7 +103,8 @@ export const createPost = async (post: Omit<Post, 'id' | 'createdAt'>): Promise<
       coverUrl: data.cover_url,
       ownerId: data.owner_id,
       userId: data.owner_id, // Set userId to be the same as ownerId
-      createdAt: data.created_at
+      createdAt: data.created_at,
+      status: data.status || 'available'
     };
   } catch (error: any) {
     console.error('Error creating post:', error);

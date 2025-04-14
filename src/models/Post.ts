@@ -8,6 +8,7 @@ export interface Post {
   description: string;
   coverUrl: string;
   ownerId: string;
-  userId: string; // Added this field
+  userId: string;
   createdAt: string;
+  status?: 'available' | 'reserved' | 'shared';
 }

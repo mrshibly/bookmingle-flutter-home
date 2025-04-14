@@ -10,6 +10,8 @@ import { useToast } from '@/components/ui/use-toast';
 import NavBar from '@/components/NavBar';
 import { format } from 'date-fns';
 import MessageDialog from '@/components/MessageDialog';
+import BookStatusBadge from '@/components/BookStatusBadge';
+import BookRecommendations from '@/components/BookRecommendations';
 
 const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,11 +19,55 @@ const BookDetailsPage: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<'available' | 'reserved' | 'shared'>('available');
   
   const { data: book, isLoading, error } = useQuery({
     queryKey: ['book', id],
     queryFn: () => getPostById(id || ''),
   });
+
+  // Mock recommendation data - would be fetched from the API in a real app
+  const recommendedBooks = [
+    {
+      id: '1',
+      title: 'To Kill a Mockingbird',
+      author: 'Harper Lee',
+      coverUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1287&auto=format&fit=crop',
+      edition: 'First Edition',
+      category: 'Fiction',
+      ownerId: '123',
+      userId: '123',
+      description: 'A classic novel about justice and race in the American South.',
+      createdAt: new Date().toISOString(),
+      status: 'available'
+    },
+    {
+      id: '2',
+      title: '1984',
+      author: 'George Orwell',
+      coverUrl: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=1288&auto=format&fit=crop',
+      edition: 'First Edition',
+      category: 'Science Fiction',
+      ownerId: '456',
+      userId: '456',
+      description: 'A dystopian novel about a totalitarian society.',
+      createdAt: new Date().toISOString(),
+      status: 'available'
+    },
+    {
+      id: '3',
+      title: 'The Great Gatsby',
+      author: 'F. Scott Fitzgerald',
+      coverUrl: 'https://images.unsplash.com/photo-1495640452828-3df6795cf69b?q=80&w=1287&auto=format&fit=crop',
+      edition: 'First Edition',
+      category: 'Classic',
+      ownerId: '789',
+      userId: '789',
+      description: 'A novel about the American Dream and the Roaring Twenties.',
+      createdAt: new Date().toISOString(),
+      status: 'available'
+    }
+  ];
 
   const handleAddToWishlist = () => {
     toast({
@@ -36,6 +82,14 @@ const BookDetailsPage: React.FC = () => {
     toast({
       title: "Link copied",
       description: "Book link copied to clipboard"
+    });
+  };
+
+  const handleUpdateStatus = (status: 'available' | 'reserved' | 'shared') => {
+    setCurrentStatus(status);
+    toast({
+      title: "Status updated",
+      description: `Book is now marked as ${status}`
     });
   };
 
@@ -106,7 +160,10 @@ const BookDetailsPage: React.FC = () => {
               </div>
               
               <div className="flex-1">
-                <h1 className="text-2xl font-bold">{book.title}</h1>
+                <div className="flex justify-between items-start">
+                  <h1 className="text-2xl font-bold">{book.title}</h1>
+                  <BookStatusBadge status={book.status || currentStatus} />
+                </div>
                 <p className="text-lg text-gray-600 mb-2">by {book.author}</p>
                 
                 <div className="flex items-center mt-2 mb-4">
@@ -125,6 +182,38 @@ const BookDetailsPage: React.FC = () => {
                   <h3 className="font-semibold mb-2">Description</h3>
                   <p className="text-gray-600 text-sm">{book.description}</p>
                 </div>
+                
+                {isMyBook && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-2">Update Status</h3>
+                    <div className="flex space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant={currentStatus === 'available' ? 'default' : 'outline'}
+                        onClick={() => handleUpdateStatus('available')}
+                        className={currentStatus === 'available' ? 'bg-green-600' : ''}
+                      >
+                        Available
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant={currentStatus === 'reserved' ? 'default' : 'outline'}
+                        onClick={() => handleUpdateStatus('reserved')}
+                        className={currentStatus === 'reserved' ? 'bg-yellow-600' : ''}
+                      >
+                        Reserved
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant={currentStatus === 'shared' ? 'default' : 'outline'}
+                        onClick={() => handleUpdateStatus('shared')}
+                        className={currentStatus === 'shared' ? 'bg-blue-600' : ''}
+                      >
+                        Shared
+                      </Button>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="mt-4">
                   <Button 
@@ -150,6 +239,9 @@ const BookDetailsPage: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        {/* Recommendations section */}
+        <BookRecommendations books={recommendedBooks} />
       </main>
 
       {/* Bottom Navigation */}
