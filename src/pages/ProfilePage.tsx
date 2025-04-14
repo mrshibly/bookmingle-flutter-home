@@ -5,10 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import { User, Settings, LogOut, ChevronRight, Heart, BookOpen, Plus, ArrowLeft, Camera } from 'lucide-react';
 import NavBar from '@/components/NavBar';
+import EditProfileDialog from '@/components/EditProfileDialog';
 import { motion } from 'framer-motion';
 
 const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { toast } = useToast();
@@ -27,6 +29,13 @@ const ProfilePage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleUpdateProfilePicture = () => {
+    toast({
+      title: "Feature coming soon",
+      description: "Profile picture upload will be available in the next update."
+    });
   };
 
   return (
@@ -55,13 +64,17 @@ const ProfilePage: React.FC = () => {
               <div className="w-20 h-20 rounded-full bg-bookMingle-background flex items-center justify-center text-2xl font-bold text-bookMingle-primary">
                 {user?.email?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <button className="absolute -right-1 bottom-0 bg-bookMingle-primary rounded-full p-1.5 shadow-md">
+              <button 
+                className="absolute -right-1 bottom-0 bg-bookMingle-primary rounded-full p-1.5 shadow-md"
+                onClick={handleUpdateProfilePicture}
+              >
                 <Camera className="h-4 w-4 text-white" />
               </button>
             </div>
             <div className="ml-4">
-              <h2 className="text-xl font-bold">{user?.email?.split('@')[0] || 'User'}</h2>
+              <h2 className="text-xl font-bold">{user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}</h2>
               <p className="text-sm text-gray-500">{user?.email || ''}</p>
+              <p className="text-sm text-gray-500">{user?.user_metadata?.country || ''}</p>
               <div className="mt-1 flex items-center">
                 <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
                   Book Lover
@@ -139,6 +152,7 @@ const ProfilePage: React.FC = () => {
           
           <motion.button 
             className="flex items-center justify-between w-full p-4 border-b"
+            onClick={() => setIsEditProfileOpen(true)}
             whileTap={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
           >
             <div className="flex items-center">
@@ -176,6 +190,9 @@ const ProfilePage: React.FC = () => {
 
       {/* Bottom Navigation */}
       <NavBar />
+      
+      {/* Edit Profile Dialog */}
+      <EditProfileDialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen} />
     </div>
   );
 };

@@ -9,9 +9,10 @@ import { motion } from 'framer-motion';
 import { User, AtSign, Lock, Map, ChevronDown } from 'lucide-react';
 
 const countries = [
+  "Bangladesh", // Added Bangladesh to the top of the list
   "United States", "Canada", "United Kingdom", "Australia", 
   "Germany", "France", "Japan", "India", "Brazil", "South Africa",
-  "Bangladesh", "Pakistan", "Sri Lanka", "Nepal", "China"
+  "Pakistan", "Sri Lanka", "Nepal", "China"
 ];
 
 const RegisterPage = () => {

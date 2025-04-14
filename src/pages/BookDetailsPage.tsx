@@ -1,192 +1,167 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
+import { getPostById } from '@/services/postService';
+import { ArrowLeft, Heart, MessageCircle, Share, User, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { User, ArrowLeft } from 'lucide-react';
-import { getPostById, getMockPosts, addToWishlist } from '@/services/postService';
-import { Post } from '@/models/Post';
 import NavBar from '@/components/NavBar';
+import { format } from 'date-fns';
+import MessageDialog from '@/components/MessageDialog';
 
-const BookDetailsPage = () => {
+const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [book, setBook] = useState<Post | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
-  
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { toast } = useToast();
+  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  
+  const { data: book, isLoading, error } = useQuery({
+    queryKey: ['book', id],
+    queryFn: () => getPostById(id || ''),
+  });
 
-  useEffect(() => {
-    const fetchBook = async () => {
-      try {
-        // In development mode, we'll use mock data
-        if (process.env.NODE_ENV === 'development') {
-          const mockPosts = getMockPosts();
-          const mockBook = mockPosts.find(post => post.id === id);
-          
-          if (mockBook) {
-            setBook(mockBook);
-          } else {
-            toast({
-              title: "Book not found",
-              description: "The requested book could not be found",
-              variant: "destructive"
-            });
-            navigate('/home');
-          }
-        } else {
-          if (!id) {
-            navigate('/home');
-            return;
-          }
-          
-          const bookData = await getPostById(id);
-          if (bookData) {
-            setBook(bookData);
-          } else {
-            toast({
-              title: "Book not found",
-              description: "The requested book could not be found",
-              variant: "destructive"
-            });
-            navigate('/home');
-          }
-        }
-      } catch (err: any) {
-        toast({
-          title: "Error",
-          description: err.message || "An unexpected error occurred",
-          variant: "destructive"
-        });
-        navigate('/home');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const handleAddToWishlist = () => {
+    toast({
+      title: "Added to wishlist",
+      description: "The book has been added to your wishlist"
+    });
+  };
 
-    fetchBook();
-  }, [id, navigate, toast]);
-
-  const handleAddToWishlist = async () => {
-    if (!user || !book) return;
-    
-    setIsAddingToWishlist(true);
-    
-    try {
-      await addToWishlist({
-        title: book.title,
-        author: book.author,
-        edition: book.edition,
-        category: book.category,
-        description: book.description,
-        coverUrl: book.coverUrl,
-        userId: user.id
-      });
-      
-      toast({
-        title: "Added to Wishlist",
-        description: `${book.title} has been added to your wishlist`,
-      });
-      
-      navigate('/wishlist');
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message || "Failed to add to wishlist",
-        variant: "destructive"
-      });
-    } finally {
-      setIsAddingToWishlist(false);
-    }
+  const handleShare = () => {
+    // In a real app, this would generate a shareable link
+    navigator.clipboard.writeText(`${window.location.origin}/book/${id}`);
+    toast({
+      title: "Link copied",
+      description: "Book link copied to clipboard"
+    });
   };
 
   if (isLoading) {
     return (
-      <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background flex items-center justify-center">
-        <p>Loading book details...</p>
+      <div className="min-h-screen bg-bookMingle-background flex items-center justify-center">
+        <div className="animate-pulse text-bookMingle-primary">Loading...</div>
       </div>
     );
   }
 
-  if (!book) {
+  if (error || !book) {
     return (
-      <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background flex items-center justify-center">
-        <p>Book not found</p>
+      <div className="min-h-screen bg-bookMingle-background flex flex-col items-center justify-center p-4">
+        <h2 className="text-xl font-semibold text-red-500 mb-2">Error</h2>
+        <p className="text-gray-600">Could not load book details</p>
+        <Button onClick={() => navigate(-1)} className="mt-4">
+          Go Back
+        </Button>
       </div>
     );
   }
+
+  const isMyBook = user?.id === book.ownerId;
+  const formattedDate = book.createdAt ? format(new Date(book.createdAt), 'MMMM dd, yyyy') : 'Unknown date';
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8 pb-20">
-      {/* Status Bar */}
-      <div className="bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs mb-4">
-        <span>9:41</span>
-        <div className="flex items-center space-x-2">
-          <span>📶</span>
-          <span>🔋 100%</span>
+    <div className="flex flex-col min-h-screen bg-bookMingle-background pb-20">
+      {/* Header */}
+      <header className="bg-bookMingle-primary px-4 py-4 shadow-md">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <button onClick={() => navigate(-1)} className="mr-3">
+              <ArrowLeft className="h-6 w-6 text-white" />
+            </button>
+            <h1 className="text-xl font-bold text-white">Book Details</h1>
+          </div>
+          <div className="flex items-center space-x-2">
+            {!isMyBook && (
+              <button 
+                onClick={handleAddToWishlist}
+                className="p-1.5 rounded-full bg-white/20"
+              >
+                <Heart className="h-5 w-5 text-white" />
+              </button>
+            )}
+            <button 
+              onClick={handleShare}
+              className="p-1.5 rounded-full bg-white/20"
+            >
+              <Share className="h-5 w-5 text-white" />
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <div className="flex justify-between items-center mb-4">
-        <button 
-          onClick={() => navigate('/home')}
-          className="text-bookMingle-primary"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-        
-        <button className="flex items-center text-bookMingle-primary text-sm">
-          <User className="h-4 w-4 mr-1" />
-          <span className="text-xs">contact Owner</span>
-        </button>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 p-4">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+          <div className="p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="flex-shrink-0 w-full sm:w-1/3 aspect-[2/3] rounded-lg overflow-hidden shadow-md">
+                <img 
+                  src={book.coverUrl || '/placeholder.svg'} 
+                  alt={book.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold">{book.title}</h1>
+                <p className="text-lg text-gray-600 mb-2">by {book.author}</p>
+                
+                <div className="flex items-center mt-2 mb-4">
+                  <span className="bg-bookMingle-primary/10 text-bookMingle-primary px-3 py-1 text-sm rounded-full">
+                    {book.category}
+                  </span>
+                  <span className="ml-2 text-sm text-gray-500">{book.edition}</span>
+                </div>
+                
+                <div className="flex items-center text-sm text-gray-500 mb-4">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  Posted on {formattedDate}
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <h3 className="font-semibold mb-2">Description</h3>
+                  <p className="text-gray-600 text-sm">{book.description}</p>
+                </div>
+                
+                <div className="mt-4">
+                  <Button 
+                    variant="outline"
+                    className="flex items-center gap-2"
+                    onClick={() => navigate(`/user/${book.ownerId}`)}
+                  >
+                    <User size={16} />
+                    View Owner Profile
+                  </Button>
+                  
+                  {!isMyBook && (
+                    <Button 
+                      className="mt-3 w-full bg-bookMingle-primary text-white flex items-center justify-center gap-2"
+                      onClick={() => setIsMessageDialogOpen(true)}
+                    >
+                      <MessageCircle size={18} />
+                      Contact Owner
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
 
-      <h1 className="text-2xl font-bold mb-4">Details about the book</h1>
-      
-      <div className="space-y-3 mb-4">
-        <div className="bg-bookMingle-card bg-opacity-80 p-3 rounded-xl">
-          {book.title}
-        </div>
-        
-        <div className="bg-bookMingle-card bg-opacity-80 p-3 rounded-xl">
-          {book.author}
-        </div>
-        
-        <div className="bg-bookMingle-card bg-opacity-80 p-3 rounded-xl">
-          {book.edition}
-        </div>
-        
-        <div className="bg-bookMingle-card bg-opacity-80 p-3 rounded-xl">
-          {book.category}
-        </div>
-      </div>
-      
-      {/* Book Cover */}
-      <div className="flex justify-center mb-4">
-        <img 
-          src={book.coverUrl} 
-          alt={book.title}
-          className="w-32 h-auto rounded-lg shadow-md"
-        />
-      </div>
-      
-      {/* Description */}
-      <div className="bg-bookMingle-card bg-opacity-60 p-4 rounded-xl mb-6 text-sm">
-        {book.description}
-      </div>
-      
-      {/* Add to Wishlist Button */}
-      <button 
-        onClick={handleAddToWishlist}
-        className="w-full bg-bookMingle-button text-white py-3 px-4 rounded-full font-medium hover:bg-opacity-90 transition-colors"
-        disabled={isAddingToWishlist}
-      >
-        {isAddingToWishlist ? "Adding..." : "Add into wishlist"}
-      </button>
-      
+      {/* Bottom Navigation */}
       <NavBar />
+      
+      {/* Message Dialog */}
+      <MessageDialog
+        open={isMessageDialogOpen}
+        onOpenChange={setIsMessageDialogOpen}
+        recipientName="Book Owner"
+        recipientId={book.ownerId}
+      />
     </div>
   );
 };
