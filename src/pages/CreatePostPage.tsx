@@ -48,7 +48,8 @@ const CreatePostPage = () => {
         category,
         description,
         coverUrl: finalCoverUrl,
-        ownerId: user.id
+        ownerId: user.id,
+        userId: user.id // Add userId, same as ownerId
       });
       
       toast({

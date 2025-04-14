@@ -25,6 +25,7 @@ export const getPosts = async (): Promise<Post[]> => {
       description: post.description,
       coverUrl: post.cover_url,
       ownerId: post.owner_id,
+      userId: post.owner_id, // Set userId to be the same as ownerId
       createdAt: post.created_at
     }));
   } catch (error: any) {
@@ -60,6 +61,7 @@ export const getPostById = async (id: string): Promise<Post | null> => {
       description: data.description,
       coverUrl: data.cover_url,
       ownerId: data.owner_id,
+      userId: data.owner_id, // Set userId to be the same as ownerId
       createdAt: data.created_at
     };
   } catch (error: any) {
@@ -98,6 +100,7 @@ export const createPost = async (post: Omit<Post, 'id' | 'createdAt'>): Promise<
       description: data.description,
       coverUrl: data.cover_url,
       ownerId: data.owner_id,
+      userId: data.owner_id, // Set userId to be the same as ownerId
       createdAt: data.created_at
     };
   } catch (error: any) {
