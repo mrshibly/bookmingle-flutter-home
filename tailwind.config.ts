@@ -104,13 +104,39 @@ export default {
 					'100%': {
 						opacity: '1',
 					},
+				},
+				'pulse-slow': {
+					'0%, 100%': {
+						opacity: '0.6',
+					},
+					'50%': {
+						opacity: '0.9',
+					},
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)',
+					},
+					'50%': {
+						transform: 'translateY(-10px)',
+					},
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 1s ease-out'
-			}
+				'fade-in': 'fade-in 1s ease-out',
+				'pulse-slow': 'pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'float': 'float 6s ease-in-out infinite',
+			},
+			fontFamily: {
+				sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont'],
+				serif: ['Playfair Display', 'ui-serif', 'Georgia'],
+			},
+			backdropFilter: {
+				'none': 'none',
+				'blur': 'blur(8px)',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Book } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 
 const SplashScreen = () => {
@@ -23,36 +23,59 @@ const SplashScreen = () => {
 
   return (
     <div className="max-w-md mx-auto h-screen bg-bookMingle-background flex flex-col justify-between items-center px-6 py-12 relative overflow-hidden">
-      {/* Status Bar */}
-      <div className="absolute top-0 left-0 right-0 bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs z-10">
-        <span>9:41</span>
-        <div className="flex items-center space-x-2">
-          <span>📶</span>
-          <span>🔋 100%</span>
-        </div>
-      </div>
-
       {/* Background Blue Circles */}
-      <div className="blue-circle w-64 h-64 -left-32 -top-10"></div>
-      <div className="blue-circle w-80 h-80 -right-40 -bottom-20"></div>
+      <motion.div 
+        className="absolute w-64 h-64 -left-32 -top-10 bg-bookMingle-primary rounded-full opacity-80"
+        initial={{ scale: 0.8, opacity: 0.5 }}
+        animate={{ scale: 1, opacity: 0.8, transition: { duration: 1.5, repeat: Infinity, repeatType: "reverse" } }}
+      />
+      <motion.div 
+        className="absolute w-80 h-80 -right-40 -bottom-20 bg-bookMingle-primary rounded-full opacity-80"
+        initial={{ scale: 0.9, opacity: 0.5 }}
+        animate={{ scale: 1.1, opacity: 0.8, transition: { duration: 2, repeat: Infinity, repeatType: "reverse", delay: 0.5 } }}
+      />
 
       {/* Logo and Brand */}
       <div></div> {/* Spacer */}
-      <div className="flex flex-col items-center animate-fade-in z-10">
+      <motion.div 
+        className="flex flex-col items-center z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.3 } }}
+      >
         <div className="flex items-center gap-3 mb-3">
-          <Book className="h-16 w-16 text-bookMingle-primary transform -rotate-12" />
-          <h1 className="text-4xl font-bold italic text-black">BookMingle</h1>
+          <motion.img 
+            src="/lovable-uploads/9b8898c9-ae55-4c42-90d9-ea5857cd67a0.png" 
+            alt="BookMingle Logo" 
+            className="h-16 w-auto"
+            initial={{ rotate: -12 }}
+            animate={{ rotate: [0, -12, 0], transition: { duration: 2, repeat: Infinity, repeatType: "reverse" } }}
+          />
+          <motion.h1 
+            className="text-4xl font-bold italic text-black"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.8, delay: 0.6 } }}
+          >
+            BookMingle
+          </motion.h1>
         </div>
-        <p className="text-sm text-bookMingle-textSecondary text-center mt-1">
+        <motion.p 
+          className="text-sm text-bookMingle-textSecondary text-center mt-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { duration: 0.8, delay: 0.9 } }}
+        >
           GIVE YOUR BOOK A NEW READER AND SAVE THE TREES
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       {/* Footer Text */}
-      <div className="text-center text-xs text-gray-500 z-10">
+      <motion.div 
+        className="text-center text-xs text-gray-500 z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.8, delay: 1.2 } }}
+      >
         <p>Not Just Planting Trees</p>
         <p>Exchanging Books Can Save Trees</p>
-      </div>
+      </motion.div>
     </div>
   );
 };
