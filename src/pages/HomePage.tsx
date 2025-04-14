@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Book, Menu, Bell, Plus, Search, X } from 'lucide-react';
+import { Book, Menu, Bell, Plus, Search, X, Trash2 } from 'lucide-react'; // Added Trash2 import
 import { useNavigate } from 'react-router-dom';
 import NavBar from '@/components/NavBar';
 import { useAuth } from '@/contexts/AuthContext';

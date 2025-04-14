@@ -194,10 +194,11 @@ export const getMockPosts = (): Post[] => {
     title: book.title,
     author: book.author,
     edition: "First Edition",
-    category: book.genre || "Fiction", // Fixed: use book.genre directly
+    category: book.genre || "Fiction",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     coverUrl: book.coverUrl,
     ownerId: "12345",
+    userId: "12345", // Add userId to match with ownerId for mock data
     createdAt: new Date().toISOString()
   }));
 };

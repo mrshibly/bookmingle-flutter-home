@@ -8,5 +8,6 @@ export interface Post {
   description: string;
   coverUrl: string;
   ownerId: string;
+  userId: string; // Added this field
   createdAt: string;
 }
