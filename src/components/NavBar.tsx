@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, BookOpen, Heart, UserCircle, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
@@ -24,8 +25,8 @@ const NavBar: React.FC = () => {
         <NavButton 
           icon={<BookOpen className="w-6 h-6" />} 
           label="Library" 
-          isActive={false} 
-          onClick={() => {}}
+          isActive={isActive('/library')} 
+          onClick={() => navigate('/library')}
         />
         <NavButton 
           icon={<Plus className="w-6 h-6" />} 
@@ -42,8 +43,8 @@ const NavBar: React.FC = () => {
         <NavButton 
           icon={<UserCircle className="w-6 h-6" />} 
           label="Profile" 
-          isActive={false} 
-          onClick={() => {}}
+          isActive={isActive('/profile')} 
+          onClick={() => navigate('/profile')}
         />
       </div>
     </div>
@@ -64,14 +65,25 @@ const NavButton: React.FC<NavButtonProps> = ({
   onClick
 }) => {
   return (
-    <button className="flex flex-col items-center" onClick={onClick}>
+    <motion.button 
+      className="flex flex-col items-center" 
+      onClick={onClick}
+      whileTap={{ scale: 0.9 }}
+    >
       <div className={`${isActive ? 'text-bookMingle-primary' : 'text-gray-400'}`}>
         {icon}
       </div>
       <span className={`text-xs mt-1 ${isActive ? 'text-bookMingle-primary font-medium' : 'text-gray-500'}`}>
         {label}
       </span>
-    </button>
+      {isActive && (
+        <motion.div 
+          className="absolute bottom-1 w-5 h-1 bg-bookMingle-primary rounded-full"
+          layoutId="activeTab"
+          transition={{ type: "spring", duration: 0.5 }}
+        />
+      )}
+    </motion.button>
   );
 };
 

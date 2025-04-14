@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,9 +35,7 @@ const WishlistPage = () => {
       
       setIsLoading(true);
       
-      // In development mode, we'll use mock data
       if (process.env.NODE_ENV === 'development') {
-        // Import mock data dynamically to avoid circular dependencies
         import('@/services/mockDataService').then(({ getMockWishlistItems }) => {
           setWishlistItems(getMockWishlistItems());
         });
@@ -71,8 +68,6 @@ const WishlistPage = () => {
     
     if (!user) return;
     
-    // In a real app, we would send this to the backend
-    // For now, just show a success message and reset the form
     toast({
       title: "Wishlist Updated",
       description: "Your item has been added to your wishlist",
@@ -87,7 +82,6 @@ const WishlistPage = () => {
       description: ''
     });
     
-    // Refresh the wishlist
     fetchWishlist();
   };
 
@@ -97,12 +91,9 @@ const WishlistPage = () => {
     try {
       setIsDeletingItem(id);
       
-      // In development mode, we'll simulate deletion
       if (process.env.NODE_ENV === 'development') {
-        // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Remove item from state
         setWishlistItems(prev => prev.filter(item => item.id !== id));
         
         toast({
@@ -112,7 +103,6 @@ const WishlistPage = () => {
       } else {
         await removeFromWishlist(id);
         
-        // Remove item from state
         setWishlistItems(prev => prev.filter(item => item.id !== id));
         
         toast({
@@ -131,7 +121,6 @@ const WishlistPage = () => {
     }
   };
 
-  // Pull to refresh functionality
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartY(e.touches[0].clientY);
   };
@@ -142,7 +131,6 @@ const WishlistPage = () => {
     const currentY = e.touches[0].clientY;
     const diff = currentY - startY;
     
-    // If user has pulled down at least 60px from the top of the screen
     if (diff > 60 && window.scrollY === 0) {
       setIsRefreshing(true);
       refreshWishlist();
@@ -160,26 +148,15 @@ const WishlistPage = () => {
       setTimeout(() => {
         setIsRefreshing(false);
         setStartY(null);
-      }, 1000); // Delay to show the refresh animation
+      }, 1000);
     }
   };
 
-  // Loading skeleton
   if (isLoading) {
     return (
       <div className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8 pb-20">
-        {/* Status Bar */}
-        <div className="bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs mb-6">
-          <span>9:41</span>
-          <div className="flex items-center space-x-2">
-            <span>📶</span>
-            <span>🔋 100%</span>
-          </div>
-        </div>
-
         <h1 className="text-2xl font-bold mb-6">My Wishlist</h1>
         
-        {/* Skeleton loading */}
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
             <div 
@@ -196,7 +173,6 @@ const WishlistPage = () => {
           ))}
         </div>
         
-        {/* Add NavBar component at the bottom */}
         <NavBar />
       </div>
     );
@@ -210,17 +186,6 @@ const WishlistPage = () => {
         exit={{ opacity: 0 }}
         className="max-w-md mx-auto min-h-screen bg-bookMingle-background px-6 py-8"
       >
-        {/* Status Bar */}
-        <div className="bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs mb-6">
-          <span>9:41</span>
-          <div className="flex items-center space-x-2">
-            <span>📶</span>
-            <span>🔋 100%</span>
-            <span className="ml-4 rounded-full bg-blue-100 px-2 py-0.5 text-blue-800">50</span>
-            <ShieldCheck className="h-4 w-4 text-bookMingle-primary" />
-          </div>
-        </div>
-
         <div className="flex items-center mb-6">
           <button 
             onClick={() => setIsCreatingNew(false)}
@@ -285,7 +250,6 @@ const WishlistPage = () => {
             />
           </div>
           
-          {/* Image Placeholder */}
           <div className="flex justify-center mb-4">
             <div className="w-32 h-32 border-2 border-bookMingle-primary border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-bookMingle-card hover:bg-opacity-30 transition-colors">
               <ImagePlus className="h-8 w-8 text-bookMingle-primary mb-2" />
@@ -328,22 +292,12 @@ const WishlistPage = () => {
       onTouchMove={handleTouchMove}
       onTouchEnd={() => setStartY(null)}
     >
-      {/* Pull to refresh indicator */}
       {isRefreshing && (
         <div className="absolute top-0 left-0 right-0 flex justify-center py-4 bg-bookMingle-background z-10">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bookMingle-primary"></div>
         </div>
       )}
       
-      {/* Status Bar */}
-      <div className="bg-transparent text-black flex justify-between items-center px-4 py-1 text-xs mb-6">
-        <span>9:41</span>
-        <div className="flex items-center space-x-2">
-          <span>📶</span>
-          <span>🔋 100%</span>
-        </div>
-      </div>
-
       <h1 className="text-2xl font-bold mb-6">My Wishlist</h1>
       
       {wishlistItems.length === 0 ? (
@@ -425,7 +379,6 @@ const WishlistPage = () => {
         </div>
       )}
       
-      {/* Add NavBar component at the bottom */}
       <NavBar />
     </div>
   );
